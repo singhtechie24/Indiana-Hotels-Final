@@ -1,53 +1,69 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, ImageBackground } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList, AuthStackParamList } from '../navigation/types';
-import { COLORS, TYPOGRAPHY, SPACING, BORDER_RADIUS } from '../constants/theme';
+import { View, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
+import { Text } from 'react-native';
+import { COLORS, TYPOGRAPHY } from '../constants/theme';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { AuthStackParamList, RootStackParamList } from '../navigation/types';
+import { CommonActions, NavigationProp, useNavigation } from '@react-navigation/native';
 
-type WelcomeScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Welcome'>;
+type Props = NativeStackScreenProps<AuthStackParamList, 'Welcome'>;
 
-export const WelcomeScreen = () => {
-  const navigation = useNavigation<WelcomeScreenNavigationProp>();
+export const WelcomeScreen = ({ navigation }: Props) => {
+  const rootNavigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  const navigateAsGuest = () => {
+    rootNavigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'Guest' }],
+      })
+    );
+  };
 
   return (
     <ImageBackground
       source={require('../../assets/Hotel-background.jpeg')}
       style={styles.container}
+      resizeMode="cover"
     >
-      <LinearGradient
-        colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)']}
-        style={styles.gradient}
-      >
-        <View style={styles.content}>
-          <Text style={styles.title}>Booking</Text>
-          <Text style={styles.subtitle}>Your Trusted Guide to Seamless Exploration</Text>
-          
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.button, styles.loginButton]}
-              onPress={() => navigation.navigate('Login')}
-            >
-              <Text style={styles.buttonText}>Log In</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              style={[styles.button, styles.registerButton]}
-              onPress={() => navigation.navigate('Register')}
-            >
-              <Text style={styles.buttonText}>Get Started</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.registerContainer}>
-            <Text style={styles.registerText}>Don't have an account? Register</Text>
-            <Text style={styles.registerSubText}>
-              Register now and take the first step towards your next adventure..
-            </Text>
-          </View>
+      <View style={styles.overlay}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Indiana Hotels</Text>
+          <Text style={styles.subtitle}>
+            Your perfect stay is just a few taps away
+          </Text>
         </View>
-      </LinearGradient>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={[styles.button, styles.guestButton]}
+            onPress={navigateAsGuest}
+          >
+            <Text style={styles.guestButtonText}>Continue as Guest</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.loginButton]}
+            onPress={() => navigation.navigate('Login')}
+          >
+            <Text style={styles.buttonText}>Login</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.registerButton]}
+            onPress={() => navigation.navigate('Register')}
+          >
+            <Text style={[styles.buttonText, styles.registerButtonText]}>Register</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.staffButton}
+            onPress={() => navigation.navigate('StaffLogin')}
+          >
+            <Text style={styles.staffButtonText}>Are you staff? Login here</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </ImageBackground>
   );
 };
@@ -55,39 +71,45 @@ export const WelcomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
-  gradient: {
+  overlay: {
     flex: 1,
-    justifyContent: 'flex-end',
-    padding: SPACING.xl,
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    padding: 20,
+    justifyContent: 'space-between',
+    paddingTop: 60,
+    paddingBottom: 40,
   },
-  content: {
+  header: {
     alignItems: 'center',
   },
   title: {
-    fontFamily: TYPOGRAPHY.fontFamily.bold,
     fontSize: TYPOGRAPHY.fontSize.xxxl,
+    fontFamily: TYPOGRAPHY.fontFamily.bold,
     color: COLORS.white,
-    marginBottom: SPACING.xs,
+    marginBottom: 8,
   },
   subtitle: {
-    fontFamily: TYPOGRAPHY.fontFamily.regular,
     fontSize: TYPOGRAPHY.fontSize.md,
+    fontFamily: TYPOGRAPHY.fontFamily.regular,
     color: COLORS.white,
-    marginBottom: SPACING.xxl,
     textAlign: 'center',
+    opacity: 0.9,
   },
   buttonContainer: {
     width: '100%',
-    gap: SPACING.md,
-    marginBottom: SPACING.xl,
+    gap: 16,
   },
   button: {
-    width: '100%',
-    padding: SPACING.md,
-    borderRadius: BORDER_RADIUS.full,
+    padding: 16,
+    borderRadius: 30,
     alignItems: 'center',
+    marginBottom: 8,
+  },
+  guestButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: COLORS.white,
   },
   loginButton: {
     backgroundColor: COLORS.white,
@@ -96,25 +118,27 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
   buttonText: {
-    fontFamily: TYPOGRAPHY.fontFamily.medium,
     fontSize: TYPOGRAPHY.fontSize.md,
-    color: COLORS.text,
+    fontFamily: TYPOGRAPHY.fontFamily.medium,
+    color: COLORS.primary,
   },
-  registerContainer: {
+  guestButtonText: {
+    fontSize: TYPOGRAPHY.fontSize.md,
+    fontFamily: TYPOGRAPHY.fontFamily.medium,
+    color: COLORS.white,
+  },
+  registerButtonText: {
+    color: COLORS.white,
+  },
+  staffButton: {
+    marginTop: 20,
     alignItems: 'center',
-    marginTop: SPACING.xl,
   },
-  registerText: {
-    fontFamily: TYPOGRAPHY.fontFamily.regular,
+  staffButtonText: {
     fontSize: TYPOGRAPHY.fontSize.sm,
-    color: COLORS.white,
-    marginBottom: SPACING.xs,
-  },
-  registerSubText: {
     fontFamily: TYPOGRAPHY.fontFamily.regular,
-    fontSize: TYPOGRAPHY.fontSize.sm,
     color: COLORS.white,
-    opacity: 0.8,
-    textAlign: 'center',
+    textDecorationLine: 'underline',
+    opacity: 0.9,
   },
 }); 

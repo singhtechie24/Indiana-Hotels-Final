@@ -21,6 +21,7 @@ type RegisterScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList
 export const RegisterScreen = () => {
   const navigation = useNavigation<RegisterScreenNavigationProp>();
   const { register } = useAuth();
+  const [displayName, setDisplayName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -28,7 +29,7 @@ export const RegisterScreen = () => {
   const [error, setError] = useState('');
 
   const handleRegister = async () => {
-    if (!email || !password || !confirmPassword) {
+    if (!email || !password || !confirmPassword || !displayName) {
       setError('Please fill in all fields');
       return;
     }
@@ -46,7 +47,7 @@ export const RegisterScreen = () => {
     try {
       setError('');
       setLoading(true);
-      await register(email, password);
+      await register(email, password, displayName);
     } catch (error) {
       setError('Failed to create an account');
     } finally {
@@ -65,9 +66,17 @@ export const RegisterScreen = () => {
       >
         <View style={styles.content}>
           <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Sign up to get started</Text>
+          <Text style={styles.subtitle}>Join us to start booking</Text>
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
+
+          <Input
+            label="Full Name"
+            placeholder="Enter your full name"
+            value={displayName}
+            onChangeText={setDisplayName}
+            autoCapitalize="words"
+          />
 
           <Input
             label="Email"
@@ -168,12 +177,12 @@ const styles = StyleSheet.create({
   },
   loginText: {
     fontFamily: TYPOGRAPHY.fontFamily.regular,
-    fontSize: TYPOGRAPHY.fontSize.md,
+    fontSize: TYPOGRAPHY.fontSize.sm,
     color: COLORS.gray,
   },
   loginLink: {
     fontFamily: TYPOGRAPHY.fontFamily.medium,
-    fontSize: TYPOGRAPHY.fontSize.md,
+    fontSize: TYPOGRAPHY.fontSize.sm,
     color: COLORS.primary,
   },
 }); 

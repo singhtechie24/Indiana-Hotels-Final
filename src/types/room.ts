@@ -1,4 +1,4 @@
-export type RoomType = 'single' | 'double' | 'suite' | 'deluxe';
+export type RoomType = 'standard' | 'deluxe' | 'suite';
 
 export interface Room {
   id: string;
@@ -7,9 +7,11 @@ export interface Room {
   price: number;
   capacity: number;
   description: string;
-  amenities: string[];
   images: string[];
-  available: boolean;
+  amenities: string[];
+  status: 'available' | 'occupied' | 'cleaning' | 'maintenance' | 'do-not-disturb';
+  lastUpdated: Date;
+  updatedBy: string;
 }
 
 export interface RoomFilters {
@@ -17,4 +19,23 @@ export interface RoomFilters {
   minPrice?: number;
   maxPrice?: number;
   capacity?: number;
+}
+
+export interface Booking {
+  id: string;
+  userId: string;
+  roomId: string;
+  checkIn: Date;
+  checkOut: Date;
+  totalPrice: number;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  paymentStatus?: 'pending' | 'completed' | 'refunded';
+  guestCount: number;
+  createdAt?: Date;
+  updatedAt?: Date;
+  paymentId?: string;
+  receiptUrl?: string;
+  guestName: string;
+  email: string;
+  phone: string;
 } 

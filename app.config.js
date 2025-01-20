@@ -2,11 +2,11 @@ import 'dotenv/config';
 
 export default {
   expo: {
-    name: "eHotelManager",
+    name: "Indiana Hotels",
     slug: "eHotelManager",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/icon.png",
+    icon: "./assets/HotelLogo.png",
     userInterfaceStyle: "light",
     splash: {
       image: "./assets/HotelLogo.png",
@@ -17,13 +17,15 @@ export default {
       "**/*"
     ],
     ios: {
-      supportsTablet: true
+      supportsTablet: true,
+      bundleIdentifier: "com.indianahotels.mobile"
     },
     android: {
       adaptiveIcon: {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#ffffff"
-      }
+      },
+      package: "com.indianahotels.mobile"
     },
     web: {
       favicon: "./assets/favicon.png"
@@ -35,6 +37,10 @@ export default {
       firebaseStorageBucket: process.env.FIREBASE_STORAGE_BUCKET,
       firebaseMessagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
       firebaseAppId: process.env.FIREBASE_APP_ID,
-    }
+      eas: {
+        projectId: "ehotelmanager-final"
+      }
+    },
+    newArchEnabled: true
   }
 }; 
